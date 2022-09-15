@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-	<title> Title </title>
+	<title> A review of Bash and UCSF Wynton </title>
 
 	<link rel="stylesheet" href="dist/reset.css">
 	<link rel="stylesheet" href="dist/reveal.css">
@@ -26,11 +26,1067 @@
 	<div class="reveal">
 		<div class="slides">
 			<section>
-				First slide
+				<h1> A short review of bash and associated *nix utilities </h1>
+			</section>
+
+			<section id="whybash">
+				<h1> Why is it nice to know about bash? </h1>
+
+				<br>
+
+				<p> Almost all of the computational systems you will interact with in your future in bioinformatics will
+					be Linux systems. </p>
+
+				<br>
+
+				<p class="fragment"> Bash is your main tool to navigate such systems and use them for various purposes.
+					Bash can:
+				</p>
+
+				<ul>
+					<li class="fragment"> fix errors when they occur both with your own workflows and when things break
+					</li>
+					<li class="fragment"> help with repeating similar processes to increase reproducibility or decrease
+						tediousness </li>
+					<li class="fragment"> manage operations requiring multiple machines / servers </li>
+				</ul>
+
+			</section>
+
+			<section id="toc">
+				<h1> Useful snippets: </h1>
+
+				<br>
+				<ul class="font-regular">
+
+					<a href="#/arraysloops">
+						<li class="text-black"> how to organize a simple program with loops and control flow </li>
+					</a>
+
+					<br>
+
+					<a href="#/utilities">
+						<li class="text-black"> utilities: <code> find</code>, <code> grep</code>, and
+							<code> screen</code>
+						</li>
+					</a>
+					<ul>
+						<li> or, "how to find files", "how to find text", and "how to run things persistently (or for a
+							long time)"</li>
+					</ul>
+
+					<br>
+
+					<a href="#/path">
+						<li class="text-black"> how to fix the "command not found" problem </li>
+					</a>
+
+					<br>
+
+					<a href="#/alias">
+						<li class="text-black"> how to set up your terminal to save time with aliases</li>
+
+					</a>
+
+					<br>
+
+					<li> not covered but highly recommended to make life easier for future you: git & github </li>
+					<ul>
+						<li> try: <a href="https://learngitbranching.js.org">https://learngitbranching.js.org/</a> or
+							<a href="https://gitexercises.fracz.com">https://gitexercises.fracz.com/</a>
+						</li>
+					</ul>
+
+				</ul>
+			</section>
+
+			<section id="arraysloops">
+				<section>
+					<h1> Starting with a simple example script: </h1>
+					<div class="multiCol">
+
+						<div class="col">
+							Some sample data, where I found FASTA sequences for proteins in these two families:
+							<img class="top-32 relative h-auto w-full rounded-2xl" src="assets/filetree.png" </div>
+						</div>
+
+						<div class="col">
+							And some code, to count the number of words in these two files.
+							<img class="top-24 relative scale-125" src="assets/simple-script.png">
+						</div>
+				</section>
+
+				<section>
+					<h1> A slight improvement: using an array and for loop </h1>
+
+					<div class="multiCol">
+						<div class="col">
+							<div class="r-stack">
+								<img class="fragment fade-out top-24 relative scale-125" src="assets/simple-script.png"
+									data-fragment-index="1">
+
+								<img class="fragment fade-in top-24 relative scale-125" src="assets/looping-script.png"
+									data-fragment-index="2">
+							</div>
+						</div>
+
+						<div class="col">
+							<div class="r-stack">
+								<img class="fragment fade-out rounded-xl top-60 relative left-20 w-auto h-full scale-125"
+									src="assets/first-output.png" data-fragment-index="1">
+								<img class="fragment fade-in rounded-xl top-60 relative left-18 w-auto h-full scale-125"
+									src="assets/second-output.png" data-fragment-index="2">
+							</div>
+						</div>
+					</div>
+
+				</section>
+
+			</section>
+
+			<section id="utilities">
+				<section>
+					<h1>Extending basic operations with common utilities </h1>
+
+					<table>
+						<tr>
+							<th>command</th>
+							<th>usage</th>
+						</tr>
+						<tr>
+							<td><code> find </code></td>
+							<td> how to find files </td>
+						</tr>
+						<tr>
+							<td><code> grep </code></td>
+							<td> how to find strings / text in files or directories</td>
+						</tr>
+						<tr>
+							<td><code> screen </code></td>
+							<td> how to run programs persistently</td>
+						</tr>
+					</table>
+
+				</section>
+
+				<section>
+					<h1> <code> find</code>, or "how do I find some files?"</h1>
+
+					<div>
+						<table class="text-4xl">
+							<tr>
+								<th> to do: </th>
+								<th> code </th>
+							</tr>
+
+							<tr>
+								<td> find files by name </td>
+								<td> <code> find . -name "*somewildcard*" </code></td>
+							</tr>
+
+							<tr>
+								<td> find files by name with logical OR </td>
+								<td> <code> find . -name "something" -o -name "else" </code> </td>
+							</tr>
+
+							<tr>
+								<td> find files by exclusion </td>
+								<td> <code> find . -name "*somewildcard*" -not -name "*fasta" </code> </td>
+							</tr>
+
+							<tr>
+								<td> find files and do something </td>
+								<td> <code> find . -name "*somewildcard*" -exec wc -l {} \; </code> </td>
+							</tr>
+
+							<tr>
+								<td> limit search depth </td>
+								<td> <code> find . -name "*somewildcard*" -mindepth x -maxdepth y </code> </td>
+							</tr>
+
+							<tr>
+								<td> find files accessed/modified/changed from $n$ days ago </td>
+								<td> <code> find . -name "*ipynb" -{a,m,c}time n </code></td>
+							</tr>
+
+							<tr>
+								<td> find files of a certain type (directory, file) </td>
+								<td> <code> find . -type {d/f} </code></td>
+							</tr>
+						</table>
+					</div>
+
+					<br>
+
+					Use find to help you with disorganized file structures and locate specific files in large datasets.
+
+				</section>
+
+				<section>
+					<h1> <code> grep</code>, or "how do I find certain text?" </h1>
+
+					<table>
+						<tr>
+							<th> to do: </th>
+							<th> code </th>
+						</tr>
+
+						<tr>
+							<td> search in file.name for 'text' </td>
+							<td> grep file.name "text" </td>
+						</tr>
+
+						<tr>
+							<td> search in file.name for 'text' case insensitive </td>
+							<td> grep -i file.name "text" </td>
+						</tr>
+
+						<tr>
+							<td> search in file.name for 'text' and get line number </td>
+							<td> grep -n file.name "text" </td>
+						</tr>
+
+						<tr>
+							<td> search in directory for file containing 'text' </td>
+							<td> grep -r . "text" </td>
+						</tr>
+
+						<tr>
+							<td> use regular expressions [for ex. any number of alphanumeric] </td>
+							<td> grep -e '[a-zA-Z0-9]*</td>
+						</tr>
+
+						<tr>
+							<td>
+								search for multiple phrases
+							</td>
+							<td> grep -e "something" -e "else" </td>
+						</tr>
+
+					</table>
+				</section>
+
+				<section>
+					<h1> <code> screen</code> (or <code>nohup</code>) </h1>
+
+					<p> <code> Screen</code> (and <code>nohup</code>) help you when you need to run programs for a long
+						time.
+
+						<br>
+						<br>
+
+						<li> <code>screen</code> creates a virtual terminal, or basically a terminal instance that you
+							can
+							reconnect to at any time. This instance persists after you disconnect. Especially useful for
+							things like jupyter notebook, where you can then reconnect to the same jupyter notebook
+							instance later.</li>
+
+					<pre><code data-trim>
+							screen -S [sessionname] # <span> create and connect to a session, ctrl-A-D to disconnect </span>
+							screen -X -S [sessionname] quit # kill session
+							<br>
+							<br>
+						</pre></code>
+
+					<br>
+					<li> <code>nohup</code> will persist a single process after logout, so that just one process
+						will continue, better for single jobs that will run for a relatively long time.</li>
+					<br>
+
+					<pre><code data-trim>
+							nohup python longprojectcode.py & # run persistently, output will go to nohup.out
+							nohup python longprojectcode.py > output-and-errors.txt # output and errors to file
+							nohup python longprojectcode.py 1> output.txt 2> errors.txt # run code and write output/error to separate files
+							nohup bash -c "mkdir outputdir && python someprogram.py --input rawdata --output outputdir" # run a chained command
+						</code></pre>
+					</p>
+
+				</section>
+
+			</section>
+
+			<section id="path">
+				<h1> The <code>PATH</code> variable, or, "how does my terminal find things?" </h1>
+
+				<p>The <code>PATH</code> variable defines a search path for the shell to look for runnable programs.
+					When you type in something (like <code>ls</code>), the shell looks in the folders in
+					<code>PATH</code> to locate the actual program you found. Note that it will use the first hit found,
+					so the order of the items in <code>PATH</code> matters.
+				</p>
+
+				<p>In order to "add something to <code>PATH</code>", you need to append something like
+					<code>PATH=${PATH}:/some/new/path</code> to your .bashrc or .zshrc file, which will get loaded every
+					time you instantiate a new terminal instance.
+				</p>
+
+			</section>
+
+			<section id="alias">
+				<h1>Save time with aliases</h1>
+
+				<div class="r-stack">
+					<div class="fragment fade-out">
+						<h4>Find yourself typing in similar commands, or maybe the same command with the same
+							arguments, very frequently?</h4>
+
+						<p>
+							Try to use an alias: a "shortcut" for a command that you can put in your
+							<code>.bashrc</code> file to have it persist across sessions.
+
+							<br>
+							<br>
+
+							Say I am always running some the <code>find</code> to find files of particular names, but I
+							don't want to type in <code>find -name ...something...</code> every time.
+
+							<br>
+							<br>
+							Add: <code>alias findname="find -name "</code> to your <code>.bashrc</code> and reload your
+							terminal and
+							now every time you type in findname something, it will be as if you fully wrote out:
+							<code>find -name "something"</code>
+
+						</p>
+					</div>
+
+					<div class="fragment">
+						<h4>This is particularly useful for SSH operations, where there is a special file for SSH
+							aliases</h4>
+
+						<p>
+							By default, at <code>~/.ssh/config</code>, you can create a file that looks like this:
+
+						<pre><code>Host webserver
+HostName 192.168.225.22
+    User sk
+
+Host wlog1
+    HostName log1.wynton.ucsf.edu
+    User alice
+
+Host dhcp
+    HostName 192.168.225.25
+    User ostechnix
+    Port 2233</code></pre>
+
+						<br>
+						After that, now instead of typing in <code>ssh alice@log1.wynton.ucsf.edu"</code>, you can type
+						in <code>ssh wlog1</code>
+
+						<br>
+
+						This gets especially convenient when you set up passwordless SSH using RSA key login.
+
+						</p>
+
+					</div>
+
+				</div>
+
 			</section>
 
 			<section>
-				Second slide
+				<h1>Introduction to Wynton</h1>
+				Also: see <a href="https://wynton.ucsf.edu">https://wynton.ucsf.edu</a> and <a
+					href="https://ucsf-wynton.slack.com/">https://ucsf-wynton.slack.com/</a>
+			</section>
+
+			<section>
+				<h1>Wynton's architecture and terminology</h1>
+
+				<p>Wynton is UCSF's HPC cluster, where the top level organization is an array of nodes, or
+					individual
+					computers. <br> <br>
+
+					Each node is one of the following types: <br>
+
+				<table class="">
+					<tr class="fragment text-4xl" data-fragment-index="1">
+						<th>type</th>
+						<th>purpose</th>
+						<th>examples</th>
+					</tr>
+
+					<tr class="fragment text-4xl" fragment-fade-in data-fragment-index="1">
+						<td>login nodes</td>
+						<td>only to log in: restricted to very simple software available. used mostly to submit jobs to
+							compute nodes. <u>connected to internet.</u>
+						</td>
+						<td> <code>log1</code>, <code>log2</code></td>
+					</tr>
+
+					<tr class="fragment text-4xl" fragment-fade-in data-fragment-index="2">
+						<td>compute nodes</td>
+						<td>nodes that are meant for actual computation, has variety of different setups (RAM, # CPU
+							cores, GPU/no GPU). <u>not connected to internet.</u></td>
+						<td>see: <a
+								href="https://wynton.ucsf.edu/hpc/about/specs.html">https://wynton.ucsf.edu/hpc/about/specs.html</a>
+						</td>
+					</tr>
+
+					<tr class="fragment text-4xl" fragment-fade-in data-fragment-index="3">
+						<td>development nodes</td>
+						<td>only reachable via login node. used for prototyping and simple operations; <b>not</b> meant
+							to be used for multi-core or heavy analysis. <u>connected to internet.</u> </td>
+						<td><code>dev1</code>, <code>dev2</code>, <code>dev3</code>,
+							<code>gpudev1</code>
+						</td>
+					</tr>
+
+					<tr class="fragment text-4xl" fragment-fade-in data-fragment-index="4">
+						<td>data transfer nodes
+						</td>
+						<td>nodes that are connected to a higher throughput internet connection to facilitate data
+							downloading. <u>connected to internet.</u>
+						</td>
+						<td><code>dt1</code>, <code>dt2</code></td>
+					</tr>
+
+				</table>
+
+				</p>
+			</section>
+
+			<section>
+				<h1>How do I submit a job?</h1>
+
+				<p>
+					The software Wynton uses to manage job submission and management is called <code>qsub</code>. In
+					order to submit a job that prints the date and hostname, you could write the following script, from
+					the Wynton wiki:
+				</p>
+
+				<div class="r-stack">
+
+					<div class="fragment fade-out">
+						<pre><code class="stretch text-3xl w-[120rem]">
+	#!/bin/bash           #the shell language when run outside of the job scheduler
+	#                     #lines starting with #$ is an instruction to the job scheduler
+	#$ -S /bin/bash       #the shell language when run via the job scheduler [IMPORTANT]
+	#$ -cwd               #job should run in the current working directory
+	#$ -j y               #STDERR and STDOUT should be joined
+	#$ -l mem_free=1G     #job requires up to 1 GiB of RAM per slot
+	#$ -l scratch=2G      #job requires up to 2 GiB of local /scratch space
+	#$ -l h_rt=24:00:00   #job requires up to 24 hours of runtime
+	#$ -r y               #if job crashes, it should be restarted
+	#$ -N SOMENAME        #job name
+	## everything above here is options for the job that configure resource management
+
+	date && hostname # could substitute this with myjob.sh
+
+	## End-of-job summary, if running as a job
+	[[ -n "$JOB_ID" ]] && qstat -j "$JOB_ID"  
+	## This is useful for debugging and usage purposes,	
+	## e.g. "did my job exceed its memory request?"
+					</code></pre>
+					</div>
+
+					<div class="fragment" fragment-fade-in>
+						You could also write the following on the command line:
+
+						<pre><code class="stretch text-3xl w-[120rem]"># submit a shell script that actually contains the command you want to run ex python something.py
+qsub -S /bin/bash -cwd -j y -l mem_free=1G \
+-l scratch=2G -l h_rt=24:00:00 -r y myjob.sh
+
+## or, if you're  feeling super lazy and want a slightly more complex command to get submitted
+echo "python something.py" | qsub -S /bin/bash -cwd -j y \
+-l mem_free=1G -l scratch=2G -l h_rt=24:00:00 -r y 
+## this is not recommended because you won't have a record of what you ran in file form 
+						</code></pre>
+					</div>
+				</div>
+
+			</section>
+
+			<section>
+				<h1> Understanding the submission script</h1>
+
+				<div class="multiCol">
+					<div class="col float-left">
+
+						<pre><code data-line-numbers="1-2|3|4|5|6|7|8|12-15" data-fragment-index="1" class="stretch text-3xl relative" style="width:65rem"> #!/bin/bash                               
+ #$ -S /bin/bash       
+ #$ -cwd               
+ #$ -j y               
+ #$ -l mem_free=1G     
+ #$ -l scratch=2G      
+ #$ -l h_rt=24:00:00   
+ #$ -r y               
+
+	... 
+	
+	## End-of-job summary, if running as a job
+	[[ -n "$JOB_ID" ]] && qstat -j "$JOB_ID"  
+	## This is useful for debugging and usage purposes,	
+	## e.g. "did my job exceed its memory request?"
+					</code></pre>
+
+					</div>
+					<div class="col flex items-center flex-col left-32 top-4 relative text-3xl" data-fragment-index="7">
+						<ul class="space-y-2">
+
+							<li class="">which interpreter to use</li>
+							<li class="fragment" data-fragment-index="1">important so you can use relative paths
+							</li>
+							<li class="fragment" data-fragment-index="2">join <code>STDIN</code> and
+								<code>STDOUT</code> into one file
+							</li>
+							<li class="fragment" data-fragment-index="3">request/wait for resources of 1 GB memory
+								PER
+								SLOT (per
+								core)</li>
+							<li class="fragment" data-fragment-index="4">request/wait for a node with 2G scratch
+								memory
+							</li>
+							<li class="fragment" data-fragment-index="5">runtime for job; will be killed after this
+								time. max is 2 weeks</li>
+							<li class="fragment" data-fragment-index="6">whether to restart on crash (once)</li>
+						</ul>
+						<p class="fragment fade-in" data-fragment-index="7"><br> <br>This part pertains to job resource
+							monitoring. Next slide:</p>
+
+					</div>
+				</div>
+
+			</section>
+
+			<section>
+				<h1>Job monitoring with <code>qstat</code></h1>
+
+				<div class="r-stack">
+					<div class="fragment fade-out">
+						Use <code>qstat</code> to understand whether:
+						<br>
+						<ul class="text-3xl">
+							<li>Your jobs are entering the queue.</li>
+							<li>How long the jobs have been running for.</li>
+							<li>How many resources are being used by your jobs.</li>
+						</ul>
+					</div>
+
+					<div class="fragment fade-in-then-out">
+						At first, you'll submit your job and then run qstat and see something like this: <br> <br>
+						<img src="assets/start.png" class="w-auto scale-150"> <br>
+
+						What does <code>qw</code> mean? queue-waiting, so it has not entered the queue.
+
+					</div>
+
+					<div class="fragment fade-in-then-out">
+						<div class="multiCol">
+							<div class="col">
+								Then, you'll get something that looks more like this: <br> <br>
+								<img src="assets/starting.png" class="scale-125">
+							</div>
+
+							<div class="col">
+								<p class="ml-8 pl-8">
+									Where your jobs will start to have status <code>r</code>, meaning that they are
+									running. <br> <br>
+
+									Notice
+									that there is a nonzero number now next to "priority" and that the jobs that are
+									running
+									are in
+									a specific "queue". <br> <br>
+
+									Not all jobs enter the same queue on Wynton. More on this later.</p>
+							</div>
+						</div>
+					</div>
+
+					<div class="fragment fade-in-then-out text-center flex items-center">
+						<p>
+							Then at some point the jobs will either finish or hit the time limit and they will be
+							removed from this output.<br><br>
+
+							Note that sometimes you might get a state code of
+							<code>E</code> which means there was an error. Track this down to understand more with
+							<code>qstat -j JOBNUMBER</code>
+						</p>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h1>Job monitoring with qstat</h1>
+
+				<p>
+					Say I want to know how many resources my job actually used: <br>
+
+					For my job in this example, <code>409831</code>, I can run: <code>qstat -j 409831 </code>to receive
+					this
+					output: </p>
+
+				<pre><code>==============================================================
+job_number:                 409831
+exec_file:                  job_scripts/409831
+submission_time:            Wed Sep 14 14:47:03 2022
+owner:                      allee
+uid:                        40128
+group:                      mac-seeley-users
+gid:                        42538
+sge_o_home:                 /wynton/home/seeley/allee
+sge_o_log_name:             allee
+sge_o_path:                 /opt/sge/bin:/opt/sge/bin/lx-amd64:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+sge_o_shell:                /bin/bash
+sge_o_workdir:              /wynton/home/seeley/allee
+sge_o_host:                 log2
+account:                    sge
+stderr_path_list:           NONE:NONE:/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/fmriprep/logs
+hard resource_list:         mem_free=10G,h_rt=144000
+mail_list:                  allee@log2
+notify:                     FALSE
+job_name:                   fmriprep
+stdout_path_list:           NONE:NONE:/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/fmriprep/logs
+jobshare:                   0
+hard_queue_list:            !*gpu.q
+shell_list:                 NONE:/bin/bash
+env_list:                   TERM=NONE,SINGULARITYPATH=/seeley/imaging/data/mridata/alee/wynton/singularity_images/fmriprep_20-05.simg,MEM_IN_MB=80000,LOGDIR=/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/fmriprep/logs,NUM_THREADS=16,OUTPUTDATAPATH=/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/fmriprep,BIDS_DATA_DIRECTORY=/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/alex/raw_data,RUNLIST=/wynton/home/seeley/allee/20220914-1446-58_fmriprep_run_files-list,TEMPLATEFLOW_HOME=/data/mridata/alee/wynton/templateflow,MEM_GB=10G,MRIQC_PATH=/seeley/imaging/data/mridata/alee/wynton/singularity_images/mriqc_0-15-1.simg
+script_file:                /seeley/imaging/data/mridata/alee/projects/fmriprep-rewrite/tmpdir_qs_cleanup_pyprocess_clean.sh
+parallel environment:  smp range: 8
+project:                    mac-users
+job-array tasks:            1-43:1
+binding:                    NONE
+job_type:                   NONE
+usage         1:            cpu=05:57:21, mem=15384.86442 GB s, io=12.53859 GB, vmem=5.174G, maxvmem=6.270G
+usage         2:            cpu=06:46:19, mem=19630.71050 GB s, io=12.65800 GB, vmem=6.466G, maxvmem=6.466G
+usage         3:            cpu=07:50:02, mem=25417.86153 GB s, io=45.38232 GB, vmem=6.373G, maxvmem=8.902G
+usage         4:            cpu=06:18:27, mem=17357.54026 GB s, io=12.42888 GB, vmem=5.648G, maxvmem=6.454G
+usage         5:            cpu=06:58:34, mem=21538.83012 GB s, io=12.36375 GB, vmem=6.611G, maxvmem=7.302G
+usage         6:            cpu=08:01:32, mem=25693.53145 GB s, io=44.27921 GB, vmem=6.307G, maxvmem=8.871G
+usage         7:            cpu=07:50:10, mem=25899.77094 GB s, io=45.67420 GB, vmem=6.336G, maxvmem=8.899G
+usage         8:            cpu=07:53:25, mem=26566.72237 GB s, io=44.15641 GB, vmem=6.602G, maxvmem=8.900G
+usage         9:            cpu=07:09:29, mem=25467.81973 GB s, io=12.50489 GB, vmem=6.614G, maxvmem=7.455G
+usage        10:            cpu=05:50:37, mem=16044.97126 GB s, io=12.70426 GB, vmem=5.702G, maxvmem=6.274G
+usage        11:            cpu=06:21:25, mem=17885.90735 GB s, io=44.51137 GB, vmem=5.763G, maxvmem=8.856G
+usage        12:            cpu=05:49:43, mem=15307.94472 GB s, io=12.62589 GB, vmem=5.722G, maxvmem=6.370G
+usage        13:            cpu=06:19:24, mem=17166.93255 GB s, io=12.65070 GB, vmem=5.716G, maxvmem=6.523G
+usage        14:            cpu=04:36:49, mem=12359.41747 GB s, io=12.92420 GB, vmem=5.168G, maxvmem=6.286G
+usage        15:            cpu=03:58:11, mem=11494.67759 GB s, io=38.80934 GB, vmem=4.317G, maxvmem=7.393G
+usage        16:            cpu=06:55:23, mem=25666.70553 GB s, io=12.77833 GB, vmem=6.324G, maxvmem=7.358G
+usage        17:            cpu=06:09:56, mem=16319.62581 GB s, io=45.55604 GB, vmem=4.587G, maxvmem=8.900G
+usage        18:            cpu=05:22:51, mem=14197.85611 GB s, io=12.83487 GB, vmem=5.191G, maxvmem=6.143G
+usage        19:            cpu=05:57:18, mem=15813.79649 GB s, io=12.64121 GB, vmem=5.039G, maxvmem=6.143G
+usage        20:            cpu=06:00:06, mem=16137.04897 GB s, io=12.54736 GB, vmem=5.783G, maxvmem=6.429G
+usage        21:            cpu=06:07:15, mem=16020.89107 GB s, io=43.73166 GB, vmem=5.662G, maxvmem=8.832G
+usage        22:            cpu=08:14:50, mem=30863.17888 GB s, io=52.37773 GB, vmem=5.534G, maxvmem=11.050G
+usage        23:            cpu=04:48:55, mem=12906.11679 GB s, io=34.33926 GB, vmem=5.647G, maxvmem=7.195G
+usage        24:            cpu=07:51:34, mem=29072.24572 GB s, io=132.13937 GB, vmem=5.471G, maxvmem=7.584G
+usage        25:            cpu=04:13:51, mem=10685.47204 GB s, io=12.57899 GB, vmem=4.719G, maxvmem=6.065G
+usage        26:            cpu=07:14:47, mem=19990.52740 GB s, io=47.08269 GB, vmem=5.669G, maxvmem=8.892G
+usage        27:            cpu=04:50:06, mem=12790.49086 GB s, io=12.46712 GB, vmem=5.126G, maxvmem=6.342G
+usage        28:            cpu=05:18:02, mem=13629.27349 GB s, io=12.35407 GB, vmem=5.135G, maxvmem=6.297G
+usage        29:            cpu=04:42:37, mem=14257.41111 GB s, io=12.18302 GB, vmem=6.441G, maxvmem=7.373G
+usage        30:            cpu=03:55:19, mem=10764.04419 GB s, io=12.59144 GB, vmem=4.545G, maxvmem=6.124G
+usage        31:            cpu=04:38:36, mem=12408.27443 GB s, io=12.36548 GB, vmem=5.002G, maxvmem=6.288G
+usage        32:            cpu=04:23:36, mem=11365.01056 GB s, io=12.36185 GB, vmem=4.835G, maxvmem=6.191G
+usage        33:            cpu=05:00:31, mem=13500.87447 GB s, io=12.25499 GB, vmem=4.798G, maxvmem=6.302G
+usage        34:            cpu=05:22:20, mem=13909.00213 GB s, io=12.50716 GB, vmem=5.111G, maxvmem=6.132G
+usage        35:            cpu=04:23:57, mem=11734.14701 GB s, io=12.38961 GB, vmem=4.783G, maxvmem=6.237G
+usage        36:            cpu=04:56:07, mem=13025.57639 GB s, io=43.74786 GB, vmem=4.549G, maxvmem=9.019G
+usage        37:            cpu=03:29:23, mem=9474.56970 GB s, io=12.43539 GB, vmem=4.550G, maxvmem=6.039G
+usage        38:            cpu=05:25:52, mem=14308.17608 GB s, io=12.55952 GB, vmem=5.125G, maxvmem=6.210G
+usage        39:            cpu=05:33:34, mem=14454.26578 GB s, io=46.00968 GB, vmem=5.045G, maxvmem=9.003G
+usage        40:            cpu=03:39:26, mem=11204.57005 GB s, io=43.65283 GB, vmem=5.144G, maxvmem=9.012G
+usage        41:            cpu=05:52:36, mem=15019.29753 GB s, io=43.95444 GB, vmem=5.098G, maxvmem=8.842G
+usage        42:            cpu=03:58:17, mem=11542.13085 GB s, io=46.53634 GB, vmem=4.447G, maxvmem=8.912G
+usage        43:            cpu=02:20:10, mem=6432.01315 GB s, io=8.38777 GB, vmem=4.900G, maxvmem=5.041G
+binding       1:            NONE
+binding       2:            NONE
+binding       3:            NONE
+binding       4:            NONE
+binding       5:            NONE
+binding       6:            NONE
+binding       7:            NONE
+binding       8:            NONE
+binding       9:            NONE
+binding      10:            NONE
+binding      11:            NONE
+binding      12:            NONE
+binding      13:            NONE
+binding      14:            NONE
+binding      15:            NONE
+binding      16:            NONE
+binding      17:            NONE
+binding      18:            NONE
+binding      19:            NONE
+binding      20:            NONE
+binding      21:            NONE
+binding      22:            NONE
+binding      23:            NONE
+binding      24:            NONE
+binding      25:            NONE
+binding      26:            NONE
+binding      27:            NONE
+binding      28:            NONE
+binding      29:            NONE
+binding      30:            NONE
+binding      31:            NONE
+binding      32:            NONE
+binding      33:            NONE
+binding      34:            NONE
+binding      35:            NONE
+binding      36:            NONE
+binding      37:            NONE
+binding      38:            NONE
+binding      39:            NONE
+binding      40:            NONE
+binding      41:            NONE
+binding      42:            NONE
+binding      43:            NONE
+scheduling info:            (Collecting of scheduler job information is turned off)
+job_number:                 409819
+exec_file:                  job_scripts/409819
+submission_time:            Wed Sep 14 14:38:47 2022
+owner:                      allee
+uid:                        40128
+group:                      mac-seeley-users
+gid:                        42538
+sge_o_home:                 /wynton/home/seeley/allee
+sge_o_log_name:             allee
+sge_o_path:                 /opt/sge/bin:/opt/sge/bin/lx-amd64:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+sge_o_shell:                /bin/bash
+sge_o_workdir:              /wynton/home/seeley/allee
+sge_o_host:                 log2
+account:                    sge
+stderr_path_list:           NONE:NONE:/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/fmriprep/logs
+hard resource_list:         mem_free=8G,h_rt=144000
+mail_list:                  allee@log2
+notify:                     FALSE
+job_name:                   fmriprep
+stdout_path_list:           NONE:NONE:/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/fmriprep/logs
+jobshare:                   0
+hard_queue_list:            !*gpu.q
+shell_list:                 NONE:/bin/bash
+env_list:                   TERM=NONE,SINGULARITYPATH=/seeley/imaging/data/mridata/alee/wynton/singularity_images/fmriprep_20-05.simg,MEM_IN_MB=64000,LOGDIR=/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/fmriprep/logs,NUM_THREADS=16,OUTPUTDATAPATH=/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/fmriprep,BIDS_DATA_DIRECTORY=/seeley/imaging/data/mridata/alee/projects/judith/preprocessing/alex/raw_data,RUNLIST=/wynton/home/seeley/allee/20220914-1438-47_fmriprep_run_files-list,TEMPLATEFLOW_HOME=/data/mridata/alee/wynton/templateflow,MEM_GB=8G,MRIQC_PATH=/seeley/imaging/data/mridata/alee/wynton/singularity_images/mriqc_0-15-1.simg
+script_file:                /seeley/imaging/data/mridata/alee/projects/fmriprep-rewrite/tmpdir_qs_cleanup_pyprocess_clean.sh
+parallel environment:  smp range: 8
+project:                    mac-users
+job-array tasks:            1-43:1
+binding:                    NONE
+job_type:                   NONE
+usage         1:            cpu=00:00:00, mem=0.00000 GB s, io=0.00000 GB, vmem=N/A, maxvmem=N/A
+usage         2:            cpu=00:00:13, mem=0.80850 GB s, io=0.36596 GB, vmem=211.418M, maxvmem=211.418M
+usage         3:            cpu=00:00:18, mem=1.17784 GB s, io=2.09263 GB, vmem=311.156M, maxvmem=311.156M
+usage         4:            cpu=00:00:10, mem=0.63428 GB s, io=0.36903 GB, vmem=114.914M, maxvmem=114.914M
+usage         5:            cpu=00:00:00, mem=0.00028 GB s, io=0.30010 GB, vmem=23.590M, maxvmem=23.590M
+usage         6:            cpu=00:00:00, mem=0.00000 GB s, io=0.00000 GB, vmem=N/A, maxvmem=N/A
+usage         7:            cpu=00:00:01, mem=0.00195 GB s, io=2.04127 GB, vmem=22.664M, maxvmem=22.664M
+usage         8:            cpu=00:00:16, mem=0.95903 GB s, io=1.92922 GB, vmem=204.859M, maxvmem=204.859M
+usage         9:            cpu=00:00:16, mem=0.99398 GB s, io=0.38055 GB, vmem=211.410M, maxvmem=211.410M
+usage        10:            cpu=00:00:17, mem=1.06133 GB s, io=0.34539 GB, vmem=288.590M, maxvmem=288.590M
+usage        11:            cpu=00:00:00, mem=0.00003 GB s, io=0.00334 GB, vmem=2.438M, maxvmem=2.438M
+usage        12:            cpu=00:00:00, mem=0.00247 GB s, io=0.40680 GB, vmem=30.457M, maxvmem=39.918M
+usage        13:            cpu=00:00:12, mem=0.77334 GB s, io=0.31915 GB, vmem=92.414M, maxvmem=92.414M
+usage        14:            cpu=00:00:05, mem=0.29880 GB s, io=0.35369 GB, vmem=89.324M, maxvmem=89.324M
+usage        15:            cpu=00:00:14, mem=0.89261 GB s, io=1.68815 GB, vmem=255.703M, maxvmem=255.703M
+binding       1:            NONE
+binding       2:            NONE
+binding       3:            NONE
+binding       4:            NONE
+binding       5:            NONE
+binding       6:            NONE
+binding       7:            NONE
+binding       8:            NONE
+binding       9:            NONE
+binding      10:            NONE
+binding      11:            NONE
+binding      12:            NONE
+binding      13:            NONE
+binding      14:            NONE
+binding      15:            NONE
+scheduling info:            (Collecting of scheduler job information is turned off)
+</code></pre>
+			</section>
+
+			</section>
+
+			<section>
+				<h1>Queues and priority</h1>
+				Also see: <a
+					href="https://wynton.ucsf.edu/hpc/scheduler/queues.htmk#available-queues">https://wynton.ucsf.edu/hpc/scheduler/queues.html#available-queues</a>
+
+				<p class="">The scheduler provides several queues to help streamline jobs getting run.
+
+					<br><br <br>
+
+					These are basically one of the following (simplified; there are others, see website):
+
+					<br>
+
+				<table>
+					<tr>
+						<th>
+
+						</th>
+						<th></th>
+					</tr>
+					<tr>
+						<td>short.q</td>
+						<td>for short jobs (<30 minutes) these get a relatively high priority. You can only have 100
+								jobs per user in short.q </td>
+					</tr>
+
+					<tr>
+						<td>long.q</td>
+						<td>anything longer than 30 minutes.</td>
+					</tr>
+
+					<tr>
+						<td>member.q</td>
+						<td>a "preferred" queue for jobs that get submitted by people who provide hardware
+							to Wynton (Wynton operates on shared hardware but labs can donate to have preferred access
+							to
+							their own hardware and then allow others shorter term usage)</td>
+					</tr>
+
+					<tr>
+						<td>gpu.q</td>
+						<td>just for GPU nodes</td>
+					</tr>
+				</table>
+
+				<br>
+
+				Within each node the priority gets lower the fewer resources (CPU, memory) you request.
+
+				</p>
+
+			</section>
+
+			<section>
+				<h1>Using the software you know and love</h1>
+
+				<div class="r-stack">
+					<div class="fragment fade-out">
+						<p>There are basically two ways to load and run arbitrary software:
+
+						<ol>
+							<li>Use a combination of <code>module</code> and programs like <code>virtualenv</code> or
+								<code>conda</code> (sufficient for most R/Python-type stuff
+							</li>
+							<ul>
+								<li>guides available on Wynton for <a
+										href="https://wynton.ucsf.edu/hpc/howto/r.html#work-with-r">R</a>, <a
+										href="https://wynton.ucsf.edu/hpc/howto/rstudio.html#work-with-rstudio">RStudio</a>,
+									<a href="https://wynton.ucsf.edu/hpc/howto/conda-stage.html"><code>conda</code></a>,
+									and
+									<a
+										href="https://wynton.ucsf.edu/hpc/howto/rstudio.html#work-with-rstudio">Jupyter</a>
+								</li>
+
+							</ul>
+							<li>use containers (Singularity/Apptainer) to modularize your software (more complex,
+								flexible)</li>
+						</ol>
+						</p>
+					</div>
+
+					<div class="fragment fade-in-then-out">
+						<h3>Using module to load software</h3>
+
+						<p>
+							<br>
+							For many common programs, (eg things like <code>bedtools</code>, or
+							<code>cellranger</code>),
+							you
+							can just type in something like:
+
+							<br> <br>
+
+							<code>module load cellranger</code>
+
+							<br> <br>
+
+							And you'll be able to load your program that way. See
+							<a
+								href="https://wynton.ucsf.edu/hpc/software/software-repositories.html">https://wynton.ucsf.edu/hpc/software/software-repositories.html</a>
+							for a full list.
+
+						</p>
+
+					</div>
+
+					<div class="fragment fade-in-then-out">
+						<h3>If you don't see your program in there, you'll have to either build it yourself on the dev
+							node (not going to cover building software from source in general), or you can use a
+							container</h3>
+						<p>
+
+						</p>
+					</div>
+
+				</div>
+
+			</section>
+
+			<section>
+				<h1>A super abridged intro to containers</h1>
+
+				<p>
+					<br>
+					Sometimes, we want to be able to take code from one person's computer and run it on another.
+					Sometimes that doesn't work.
+
+					<br> <br>
+
+					Containers solve this problem by packaging an entire operating system inside a single file or
+					object, so that we can send that thing to someone and use it to directly run some code.
+
+					<br> <br>
+
+					Singularity/Apptainer
+					is a version of container software specifically for HPC and meant to facilitate reproducibility, and
+					allows you to basically package up your workflow dependencies for later use.
+
+					<br> <br>
+
+					Unfortunately, I'm not going to talk about how this works, but just cover what we can use it for.
+
+				</p>
+			</section>
+
+			<section>
+				<h3>Creating an Apptainer/Singularity "image" for use on Wynton</h3>
+
+				<div class="r-stack">
+
+					<div class="fragment fade-out">
+						<p>
+							The first thing to do is check to see if you don't have to build your own image.
+
+							<br><br>
+
+							If someone else has created a Docker or Singularity/Apptainer image already, you can simply
+							run something like:<br>
+
+							<code>apptainer pull litd/docker-cellranger</code>
+
+							<br><br>
+
+							Note that Docker images can be converted to Singularity, but not the other way. It is
+							generally better to use <code>apptainer pull</code> than <code>docker pull</code>
+
+							<br><br>
+
+						</p>
+
+					</div>
+
+					<div class="fragment fade-in-then-out">If not, the thing to do is to create an Apptainer recipe
+						file:
+
+						<pre><code class="stretch w-[96rem]">Bootstrap: docker
+From: ubuntu:18.04
+Stage: build
+
+%environment
+    export SOME_ENVIRONMENT_VARIABLE=12345
+
+%post
+    apt-get update && apt-get install -y wget 
+    SOME_OTHER_VARIABLE=`15`
+    echo "export SOME_OTHER_VARIABLE=\"${NOW}\"" >> $APPTAINER_ENVIRONMENT
+
+%runscript
+    echo "Container was created!"
+    echo "Arguments received: $*"
+    exec echo "$@"
+
+%labels
+    Author alice
+    Version v0.0.1
+
+%help
+    This is a demo container used to illustrate a very minimal build.
+</code></pre>
+
+						<p>Which you can then build with <code>apptainer build</code>. Keep in mind you can either build
+							the images on your machine and then upload them to Wynton or use the "remote build" system:
+							see <a href="https://wynton.ucsf.edu/hpc/software/singularity.html">here</a>.</p>
+
+					</div>
+
+					<div class="fragment">
+						<p> Finally, you can now run something like:
+							<br> <br>
+							<code>apptainer exec someimage.sif "python something.py" </code>
+						</p>
+					</div>
+				</div>
+
+			</section>
+
+			<section>
+				<h1>One last thing: batch jobs</h1>
+
+				<div class="r-stack">
+
+					<div class="fragment fade-out flex flex-col items-center justify-center columns-1">
+						<p>
+							<br>
+
+							It makes the scheduler stressed out when you submit a whole bunch of jobs at once. If your
+							make
+							the
+							scheduler mad, or you might get an irritated email from the admins.
+
+							<br> <br>
+
+						</p>
+
+						<h4> How many jobs to start thinking about a job array? </h4>
+						<img src="assets/josh.png" class="h-auto w-[80rem]">
+					</div>
+
+					<div class="fragment">
+						<h3>How do we set up a job array (batch job)? </h3>
+
+						<p>The short of it is that you have a job you want to run several times, maybe on $N$
+							files. For this example, we will say that it's a Python script that runs like this:
+							<code>python inputfile.py</code><br><br>
+
+							Then, the simplest way (for this example) to run all of these with a batch array is to:
+
+						<ol>
+							<li>gather all your filepaths into one file, say all_filepaths.txt</li>
+							<li>and then, write your script like so:</li>
+						</ol>
+						</p>
+
+						<div class="multiCol">
+							<div class="col items-start">
+								<pre><code class="text-xl w-[55rem]">## run-all-jobs.sh
+TOT_NUMBER_JOBS=$(wc -l < all_filepaths.txt)
+
+qsub -t 1-${TOT_NUMBER_JOBS} -S /bin/bash -cwd -j y -l mem_free=1G \
+-l scratch=2G -l h_rt=24:00:00 -r y run-one-job.sh
+								</code></pre>
+							</div>
+							<div class="col">
+
+								<pre><code class="text-xl">## run-one-job.sh
+SGE_TASK_ID=${SGE_TASK_ID} 
+# super explicitly gathering this environment variable that SGE
+# will generate for us, it will start at 1
+
+NTH_FILE=$(sed -n "${SGE_TASK_ID}"p all_filepaths.txt)
+
+python someprogram.py ${NTH_FILE}
+								</code></pre>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section>
+				<h1>Questions?</h1>
+
+				<h4>Make sure to check on the Wynton slack or Wynton website if you have other questions.</h4>
+
 			</section>
 
 		</div>
@@ -51,6 +1107,7 @@
 		// - https://revealjs.com/initialization/
 		// - https://revealjs.com/config/
 		Reveal.initialize({
+			showNotes: "separate-page",
 			hash: true,
 			center: true,
 			margin: 0,
