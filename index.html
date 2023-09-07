@@ -350,14 +350,15 @@
 					</div>
 
 					<div class="fragment">
-						<h4>This is particularly useful for SSH operations, where there is a special file for SSH
+						<h4 class="text-6xl">This is particularly useful for SSH operations, where there is a special
+							file for SSH
 							aliases</h4>
 
 						<p>
 							By default, at <code>~/.ssh/config</code>, you can create a file that looks like this:
 
-						<pre><code>Host webserver
-HostName 192.168.225.22
+						<pre class="drop-shadow-2xl"><code class="drop-shadow-2xl">Host webserver
+	  HostName 192.168.225.22
     User sk
 
 Host wlog1
@@ -370,7 +371,7 @@ Host dhcp
     Port 2233</code></pre>
 
 						<br>
-						After that, now instead of typing in <code>ssh alice@log1.wynton.ucsf.edu"</code>, you can type
+						After that, now instead of typing in <code>ssh alice@log1.wynton.ucsf.edu</code>, you can type
 						in <code>ssh wlog1</code>
 
 						<br>
@@ -396,29 +397,31 @@ Host dhcp
 
 				<p>Wynton is UCSF's HPC cluster, where the top level organization is an array of nodes, or
 					individual
-					computers. <br> <br>
-
-					Each node is one of the following types: <br>
+					computers. Each node is one of the following types: <br>
+					<br>
 
 				<table class="">
 					<tr class="fragment text-4xl" data-fragment-index="1">
 						<th>type</th>
 						<th>purpose</th>
+						<th>internet?</th>
 						<th>examples</th>
 					</tr>
 
 					<tr class="fragment text-4xl" fragment-fade-in data-fragment-index="1">
 						<td>login nodes</td>
 						<td>only to log in: restricted to very simple software available. used mostly to submit jobs to
-							compute nodes. <u>connected to internet.</u>
+							compute nodes.
 						</td>
+						<td>yes</td>
 						<td> <code>log1</code>, <code>log2</code></td>
 					</tr>
 
 					<tr class="fragment text-4xl" fragment-fade-in data-fragment-index="2">
 						<td>compute nodes</td>
 						<td>nodes that are meant for actual computation, has variety of different setups (RAM, # CPU
-							cores, GPU/no GPU). <u>not connected to internet.</u></td>
+							cores, GPU/no GPU). </td>
+						<td>no</td>
 						<td>see: <a
 								href="https://wynton.ucsf.edu/hpc/about/specs.html">https://wynton.ucsf.edu/hpc/about/specs.html</a>
 						</td>
@@ -427,7 +430,8 @@ Host dhcp
 					<tr class="fragment text-4xl" fragment-fade-in data-fragment-index="3">
 						<td>development nodes</td>
 						<td>only reachable via login node. used for prototyping and simple operations; <b>not</b> meant
-							to be used for multi-core or heavy analysis. <u>connected to internet.</u> </td>
+							to be used for multi-core or heavy analysis.</td>
+						<td>yes</td>
 						<td><code>dev1</code>, <code>dev2</code>, <code>dev3</code>,
 							<code>gpudev1</code>
 						</td>
@@ -437,8 +441,9 @@ Host dhcp
 						<td>data transfer nodes
 						</td>
 						<td>nodes that are connected to a higher throughput internet connection to facilitate data
-							downloading. <u>connected to internet.</u>
+							downloading.
 						</td>
+						<td> yes </td>
 						<td><code>dt1</code>, <code>dt2</code></td>
 					</tr>
 
@@ -481,17 +486,19 @@ Host dhcp
 					</code></pre>
 					</div>
 
-					<div class="fragment" fragment-fade-in>
-						You could also write the following on the command line:
+					<div class="fragment inline-block text-4xl items-center flex flex-row" fragment-fade-in>
+						Or, an alternative:
+						<br> <br>
 
-						<pre><code class="stretch text-3xl w-[120rem]"># submit a shell script that actually contains the command you want to run ex python something.py
+						<pre><code class="stretch text-4xl min-w-max"># submit a shell script that actually contains the command you want to run 
+# ex python something.py
 qsub -S /bin/bash -cwd -j y -l mem_free=1G \
 -l scratch=2G -l h_rt=24:00:00 -r y myjob.sh
 
-## or, if you're  feeling super lazy and want a slightly more complex command to get submitted
+# or, if you're  feeling super lazy and want a slightly more complex command
 echo "python something.py" | qsub -S /bin/bash -cwd -j y \
 -l mem_free=1G -l scratch=2G -l h_rt=24:00:00 -r y 
-## this is not recommended because you won't have a record of what you ran in file form 
+# this way you don't get a file, however
 						</code></pre>
 					</div>
 				</div>
@@ -501,28 +508,31 @@ echo "python something.py" | qsub -S /bin/bash -cwd -j y \
 			<section>
 				<h1> Understanding the submission script</h1>
 
-				<div class="multiCol">
-					<div class="col float-left">
+				<div class=" flex flex-row">
+					<!-- <div class="col float-left"> -->
+					<div class="">
 
-						<pre><code data-line-numbers="1-2|3|4|5|6|7|8|12-15" data-fragment-index="1" class="stretch text-3xl relative" style="width:65rem"> #!/bin/bash                               
- #$ -S /bin/bash       
- #$ -cwd               
- #$ -j y               
- #$ -l mem_free=1G     
- #$ -l scratch=2G      
- #$ -l h_rt=24:00:00   
- #$ -r y               
+						<pre><code data-line-numbers="1-2|3|4|5|6|7|8|12-15" data-fragment-index="1" class="stretch text-4xl relative" 
+							style="width:78rem">#!/bin/bash                               
+#$ -S /bin/bash       
+#$ -cwd               
+#$ -j y               
+#$ -l mem_free=1G     
+#$ -l scratch=2G      
+#$ -l h_rt=24:00:00   
+#$ -r y               
 
-	... 
+my-code-here.sh
 	
-	## End-of-job summary, if running as a job
-	[[ -n "$JOB_ID" ]] && qstat -j "$JOB_ID"  
-	## This is useful for debugging and usage purposes,	
-	## e.g. "did my job exceed its memory request?"
+[[ -n "$JOB_ID" ]] && qstat -j "$JOB_ID"  
+# End-of-job summary, if running as a job
+# This is useful for debugging and usage purposes,	
+# e.g. "did my job exceed its memory request?"
+
 					</code></pre>
 
 					</div>
-					<div class="col flex items-center flex-col left-32 top-4 relative text-3xl" data-fragment-index="7">
+					<div class="col flex items-center flex-col left-16 top-0 relative text-4xl" data-fragment-index="7">
 						<ul class="space-y-2">
 
 							<li class="">which interpreter to use</li>
@@ -542,7 +552,7 @@ echo "python something.py" | qsub -S /bin/bash -cwd -j y \
 								time. max is 2 weeks</li>
 							<li class="fragment" data-fragment-index="6">whether to restart on crash (once)</li>
 						</ul>
-						<p class="fragment fade-in" data-fragment-index="7"><br> <br>This part pertains to job resource
+						<p class="fragment fade-in" data-fragment-index="7"><br> This part pertains to job resource
 							monitoring. Next slide:</p>
 
 					</div>
@@ -554,10 +564,10 @@ echo "python something.py" | qsub -S /bin/bash -cwd -j y \
 				<h1>Job monitoring with <code>qstat</code></h1>
 
 				<div class="r-stack">
-					<div class="fragment fade-out">
+					<div class="fragment fade-out text-6xl">
 						Use <code>qstat</code> to understand whether:
-						<br>
-						<ul class="text-3xl">
+						<br> <br>
+						<ul class="text-5xl">
 							<li>Your jobs are entering the queue.</li>
 							<li>How long the jobs have been running for.</li>
 							<li>How many resources are being used by your jobs.</li>
@@ -595,7 +605,7 @@ echo "python something.py" | qsub -S /bin/bash -cwd -j y \
 						</div>
 					</div>
 
-					<div class="fragment fade-in-then-out text-center flex items-center">
+					<div class="fragment fade-in-then-out text-center flex items-center text-5xl">
 						<p>
 							Then at some point the jobs will either finish or hit the time limit and they will be
 							removed from this output.<br><br>
@@ -1036,7 +1046,7 @@ Stage: build
 
 						</p>
 
-						<h4> How many jobs to start thinking about a job array? </h4>
+						<h4 class="text-5xl"> How many jobs to start thinking about a job array? </h4>
 						<img src="assets/josh.png" class="h-auto w-[80rem]">
 					</div>
 
@@ -1057,7 +1067,7 @@ Stage: build
 
 						<div class="multiCol">
 							<div class="col items-start">
-								<pre><code class="text-xl w-[55rem]">## run-all-jobs.sh
+								<pre><code class="text-3xl w-[55rem]">## run-all-jobs.sh
 TOT_NUMBER_JOBS=$(wc -l < all_filepaths.txt)
 
 qsub -t 1-${TOT_NUMBER_JOBS} -S /bin/bash -cwd -j y -l mem_free=1G \
@@ -1066,7 +1076,7 @@ qsub -t 1-${TOT_NUMBER_JOBS} -S /bin/bash -cwd -j y -l mem_free=1G \
 							</div>
 							<div class="col">
 
-								<pre><code class="text-xl">## run-one-job.sh
+								<pre><code class="text-3xl">## run-one-job.sh
 SGE_TASK_ID=${SGE_TASK_ID} 
 # super explicitly gathering this environment variable that SGE
 # will generate for us, it will start at 1
@@ -1083,9 +1093,35 @@ python someprogram.py ${NTH_FILE}
 			</section>
 
 			<section>
+				<h1> The last part: signing up </h1>
+
+				<span class="text-5xl">
+					<br>
+					Go to: <a class=""
+						href=" https://wynton.ucsf.edu/hpc/about/join.html">https://wynton.ucsf.edu/hpc/about/join.html</a>
+					<br>
+					(make sure you are on VPN or log in to MyAccess)
+				</span>
+
+				<p class="text-5xl">
+					<br>
+					Fill out the form: make sure for this year to include Katie Pollard as PI (Approver name)
+
+					<br> <br>
+
+					Put in the comments section that it is for "bmi206".
+
+					<br> <br>
+					You need to reset your password after some period, so try not to forget or else you'll have to email
+					an admin and asked them to reset it (slow). Ideally: set up RSA key login.
+				</p>
+
+			</section>
+			<section>
 				<h1>Questions?</h1>
 
-				<h4>Make sure to check on the Wynton slack or Wynton website if you have other questions.</h4>
+				<h4 class="text-5xl">Make sure to check on the Wynton slack or Wynton website if you have other
+					questions.</h4>
 
 			</section>
 
